@@ -94,7 +94,7 @@ def check_password_strength(password):
         return {
             "score": 0,
             "strength": "Empty",
-            "color": "#CCCCCC",
+            "color": "white",
             "width": "0%",
             "feedback": "Please enter a password"
         }
@@ -115,7 +115,7 @@ def check_password_strength(password):
         return {
             "score": 1,
             "strength": "Weak 🚨",
-            "color": "#FF5252",
+            "color": "white",
             "width": "25%",
             "feedback": "Easily hackable! Regenerate or modify.",
             "criteria": criteria
@@ -124,7 +124,7 @@ def check_password_strength(password):
         return {
             "score": 2,
             "strength": "Medium 🛡️",
-            "color": "#FFC107",
+            "color": "white",
             "width": "50%",
             "feedback": "Better, but can be improved.",
             "criteria": criteria
@@ -133,7 +133,7 @@ def check_password_strength(password):
         return {
             "score": 3,
             "strength": "Strong 💪",
-            "color": "#4CAF50",
+            "color": "white",
             "width": "75%",
             "feedback": "Solid password with good protection!",
             "criteria": criteria
@@ -142,7 +142,7 @@ def check_password_strength(password):
         return {
             "score": 4,
             "strength": "Fortress 🏰",
-            "color": "#2E7D32",
+            "color": "white",
             "width": "100%",
             "feedback": "Impenetrable Digital Fortress!",
             "criteria": criteria
