@@ -3,26 +3,24 @@ import time
 import re
 import string
 import random
-from streamlit_lottie import st_lottie
-import requests
 import math
 
 # Page configuration
 st.set_page_config(
-    page_title="🔐 Ultimate Password Guardian",
+    page_title="🔐 Password Guardian",
     page_icon="🔒",
-    layout="centered",
+    layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Enhanced custom CSS
+# Custom CSS
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
     
     .stApp {
         background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-          color: white;
+        color: white;
     }
     
     .main-container {
@@ -35,32 +33,11 @@ st.markdown("""
         color: white;
     }
     
-    .password-display {
-        background: rgba(0,0,0,0.3);
-        border-radius: 10px;
-        padding: 15px;
-        font-family: 'Orbitron', sans-serif;
-        letter-spacing: 2px;
-        text-align: center;
-        color: #4cff4c;
-    }
-    
     .strength-meter {
         background: rgba(255,255,255,0.2);
         border-radius: 10px;
         overflow: hidden;
-    }
-    
-    .btn-generate {
-        background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%) !important;
-        border: none !important;
-        color: white !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .btn-generate:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(37, 117, 252, 0.5);
+        height: 15px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -119,7 +96,7 @@ def check_password_strength(password):
             "strength": "Empty",
             "color": "#CCCCCC",
             "width": "0%",
-            "feedback": "Please enter or generate a password"
+            "feedback": "Please enter a password"
         }
     
     entropy = calculate_entropy(password)
@@ -137,118 +114,149 @@ def check_password_strength(password):
     if entropy < 40:
         return {
             "score": 1,
-            "strength": "Weak",
+            "strength": "Weak 🚨",
             "color": "#FF5252",
             "width": "25%",
-            "feedback": "💥 Easily hackable! Regenerate or modify.",
+            "feedback": "Easily hackable! Regenerate or modify.",
             "criteria": criteria
         }
     elif entropy < 60:
         return {
             "score": 2,
-            "strength": "Medium",
+            "strength": "Medium 🛡️",
             "color": "#FFC107",
             "width": "50%",
-            "feedback": "🛡️ Better, but not perfect. Can be improved.",
+            "feedback": "Better, but can be improved.",
             "criteria": criteria
         }
     elif entropy < 80:
         return {
             "score": 3,
-            "strength": "Strong",
+            "strength": "Strong 💪",
             "color": "#4CAF50",
             "width": "75%",
-            "feedback": "✨ Solid password with good protection!",
+            "feedback": "Solid password with good protection!",
             "criteria": criteria
         }
     else:
         return {
             "score": 4,
-            "strength": "Fortress",
+            "strength": "Fortress 🏰",
             "color": "#2E7D32",
             "width": "100%",
-            "feedback": "🏰 Impenetrable Digital Fortress!",
+            "feedback": "Impenetrable Digital Fortress!",
             "criteria": criteria
         }
 
 # Main Streamlit App
 def main():
-    # Initialize session state for password if not exists
-    if 'generated_password' not in st.session_state:
-        st.session_state.generated_password = generate_password()
-
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
     
-    st.title("🔐 Ultimate Password Guardian")
-    st.markdown("*Generate & Fortify Your Digital Security*")
+    st.title("🔐 Password Guardian")
+    st.markdown("*Your Ultimate Security Companion*")
     
-    # Password Generation Section
-    st.subheader("🎲 Generate Unbreakable Password")
+    # Create tabs
+    tab1, tab2 = st.tabs(["🎲 Password Generator", "🛡️ Strength Checker"])
     
-    # Length slider
-    length = st.slider("Password Length", min_value=8, max_value=24, value=12, step=1)
-    
-    # Generate Button
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        generated_password = st.text_input(
-            "Your Secure Password", 
-            value=st.session_state.generated_password, 
-            type="password"
-        )
-    
-    with col2:
-        regenerate = st.button("🔄 Regenerate", use_container_width=True, 
-                               help="Create a new random password")
-    
-    if regenerate:
-        # Update session state with new password
-        st.session_state.generated_password = generate_password(length)
-        # Rerun the app to refresh the display
-        st.rerun()
-    
-    # Copy to clipboard button
-    copy_btn = st.button("📋 Copy Password", use_container_width=True)
-    if copy_btn:
-        st.code(generated_password)
-        st.success("Password copied to clipboard!")
-    
-    # Strength Analysis
-    st.subheader("🛡️ Password Strength Analysis")
-    
-    # Strength meter
-    result = check_password_strength(generated_password)
-    
-    st.markdown(f"""
-    <div class="strength-meter">
-        <div style="width: {result['width']}; 
-                    height: 10px; 
-                    background-color: {result['color']};">
+    # Password Generator Tab
+    with tab1:
+        st.subheader("Generate Unbreakable Passwords")
+        
+        # Length slider
+        length = st.slider("Password Length", min_value=8, max_value=24, value=12, step=1)
+        
+        # Generate Button
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            # Initialize session state for generated password
+            if 'generated_password' not in st.session_state:
+                st.session_state.generated_password = generate_password(length)
+            
+            generated_password = st.text_input(
+                "Your Secure Password", 
+                value=st.session_state.generated_password, 
+                type="password"
+            )
+        
+        with col2:
+            regenerate = st.button("🔄 Regenerate", use_container_width=True, 
+                                   help="Create a new random password")
+        
+        if regenerate:
+            # Update session state with new password
+            st.session_state.generated_password = generate_password(length)
+            st.rerun()
+        
+        # Copy to clipboard button
+        copy_btn = st.button("📋 Copy Password", use_container_width=True)
+        if copy_btn:
+            st.code(generated_password)
+            st.success("Password copied to clipboard!")
+        
+        # Show password strength in generator tab
+        result = check_password_strength(generated_password)
+        
+        st.subheader("🔍 Password Strength")
+        # Strength meter
+        st.markdown(f"""
+        <div class="strength-meter">
+            <div style="width: {result['width']}; 
+                        height: 100%; 
+                        background-color: {result['color']};">
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+        
+        # Strength display
+        st.markdown(f"""
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: {result['color']}; font-weight: bold;">{result['strength']}</span>
+            <span>{result['feedback']}</span>
+        </div>
+        """, unsafe_allow_html=True)
     
-    # Strength display
-    st.markdown(f"""
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: {result['color']}; font-weight: bold;">{result['strength']}</span>
-        <span>{result['feedback']}</span>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Detailed Criteria
-    st.subheader("✅ Security Checklist")
-    criteria_items = [
-        ("🔤 Lowercase Letters", any(c.islower() for c in generated_password)),
-        ("🔠 Uppercase Letters", any(c.isupper() for c in generated_password)),
-        ("🔢 Numbers", any(c.isdigit() for c in generated_password)),
-        ("🔣 Special Characters", any(c in string.punctuation for c in generated_password)),
-        ("📏 Minimum Length (12+)", len(generated_password) >= 12)
-    ]
-    
-    for text, is_met in criteria_items:
-        icon = "✅" if is_met else "❌"
-        st.markdown(f"{icon} {text}")
+    # Strength Checker Tab
+    with tab2:
+        st.subheader("Check Your Password Strength")
+        
+        # User password input
+        user_password = st.text_input("Enter your password", type="password", key="strength_check")
+        
+        if user_password:
+            # Check password strength
+            result = check_password_strength(user_password)
+            
+            # Strength meter
+            st.markdown(f"""
+            <div class="strength-meter">
+                <div style="width: {result['width']}; 
+                            height: 100%; 
+                            background-color: {result['color']};">
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Strength display
+            st.markdown(f"""
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: {result['color']}; font-weight: bold;">{result['strength']}</span>
+                <span>{result['feedback']}</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Detailed Criteria
+            st.subheader("✅ Security Checklist")
+            criteria_items = [
+                ("🔤 Lowercase Letters", any(c.islower() for c in user_password)),
+                ("🔠 Uppercase Letters", any(c.isupper() for c in user_password)),
+                ("🔢 Numbers", any(c.isdigit() for c in user_password)),
+                ("🔣 Special Characters", any(c in string.punctuation for c in user_password)),
+                ("📏 Minimum Length (12+)", len(user_password) >= 12)
+            ]
+            
+            for text, is_met in criteria_items:
+                icon = "✅" if is_met else "❌"
+                st.markdown(f"{icon} {text}")
     
     # Security Tips
     st.subheader("💡 Password Security Tips")
